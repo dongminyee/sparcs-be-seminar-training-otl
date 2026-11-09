@@ -1,11 +1,15 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-export const classTimeSchema = z.object({
-  day: z.number().int().min(0).max(4),
-  begin: z.number().int().min(0).max(1439),
-  end: z.number().int().min(1).max(1440),
-  room: z.string().min(1).max(64),
-}).refine(({ begin, end }) => begin < end, { message: 'end must be after begin' });
+export const classTimeSchema = z
+  .object({
+    day: z.number().int().min(0).max(4),
+    begin: z.number().int().min(0).max(1439),
+    end: z.number().int().min(1).max(1440),
+    room: z.string().min(1).max(64),
+  })
+  .refine(({ begin, end }) => begin < end, {
+    message: "end must be after begin",
+  });
 
 export const lectureSchema = z.object({
   id: z.number().int().positive().max(2_147_483_647),
@@ -18,16 +22,22 @@ export const lectureSchema = z.object({
   credit: z.number().int().min(0).max(30),
   year: z.number().int().min(2000).max(2100),
   semester: z.number().int().min(1).max(4),
-  classes: z.array(classTimeSchema).refine(
-    (classes) => new Set(classes.map(({ day, begin }) => `${day}:${begin}`)).size === classes.length,
-    { message: 'class start times must be unique' },
-  ),
+  classes: z
+    .array(classTimeSchema)
+    .refine(
+      classes =>
+        new Set(classes.map(({ day, begin }) => `${day}:${begin}`)).size ===
+        classes.length,
+      { message: "class start times must be unique" },
+    ),
 });
 
-export const lectureFeedSchema = z.array(lectureSchema).refine(
-  (lectures) => new Set(lectures.map(({ id }) => id)).size === lectures.length,
-  { message: 'lecture IDs must be unique' },
-);
+export const lectureFeedSchema = z
+  .array(lectureSchema)
+  .refine(
+    lectures => new Set(lectures.map(({ id }) => id)).size === lectures.length,
+    { message: "lecture IDs must be unique" },
+  );
 
 export type ClassTime = z.infer<typeof classTimeSchema>;
 export type Lecture = z.infer<typeof lectureSchema>;
@@ -38,11 +48,19 @@ export type Session = {
   user: { id: number; username: string; name: string };
 };
 
-export const demo = { username: 'student', password: 'mini-otl-2026', userId: 1 } as const;
+export const demo = {
+  username: "student",
+  password: "mini-otl-2026",
+  userId: 1,
+} as const;
 
 export const reviewContentLimit = 500;
-export const reviewContentSchema = z.string().trim().min(1).max(reviewContentLimit);
-export const reviewDemoUsername = 'student2';
+export const reviewContentSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(reviewContentLimit);
+export const reviewDemoUsername = "student2";
 
 export type Review = {
   id: number;

@@ -2,11 +2,11 @@
 
 사용자는 강의별로 리뷰를 한 건 작성할 수 있습니다. 강의 제목을 누르면 준비된 Next 화면이 해당 강의의 리뷰를 요청합니다. [리뷰 컨트롤러](../../apps/api/src/reviews/presentation/reviews.controller.ts)의 조회·작성·삭제 스텁에서 시작하세요.
 
-| 요청 | 성공 |
-| --- | --- |
-| `GET /api/lectures/:lectureId/reviews` | `200 Review[]` |
-| `POST /api/lectures/:lectureId/reviews` | `201 Review` |
-| `DELETE /api/lectures/:lectureId/reviews/:reviewId` | `204` |
+| 요청                                                | 성공           |
+| --------------------------------------------------- | -------------- |
+| `GET /api/lectures/:lectureId/reviews`              | `200 Review[]` |
+| `POST /api/lectures/:lectureId/reviews`             | `201 Review`   |
+| `DELETE /api/lectures/:lectureId/reviews/:reviewId` | `204`          |
 
 ## 구현 범위
 

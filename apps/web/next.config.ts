@@ -1,7 +1,7 @@
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
 
 const config: NextConfig = {
-  transpilePackages: ['@mini-otl/contracts'],
+  transpilePackages: ["@mini-otl/contracts"],
   devIndicators: false,
 };
 

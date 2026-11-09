@@ -2,9 +2,9 @@
 
 다른 사용자의 리뷰에 하트를 누르거나 취소합니다. [리뷰 컨트롤러](../../apps/api/src/reviews/presentation/reviews.controller.ts)의 하트 스텁에서 시작하세요.
 
-| 요청 | 성공 |
-| --- | --- |
-| `POST /api/lectures/:lectureId/reviews/:reviewId/heart` | `204` |
+| 요청                                                      | 성공  |
+| --------------------------------------------------------- | ----- |
+| `POST /api/lectures/:lectureId/reviews/:reviewId/heart`   | `204` |
 | `DELETE /api/lectures/:lectureId/reviews/:reviewId/heart` | `204` |
 
 ## 구현 범위

@@ -2,11 +2,11 @@
 
 JWT로 확인한 사용자의 시간표를 조회하고 강의를 담거나 뺍니다. [시간표 컨트롤러](../../apps/api/src/timetable/presentation/timetable.controller.ts)의 세 스텁에서 시작하세요.
 
-| 요청 | 성공 |
-| --- | --- |
-| `GET /api/timetable` | `200 Lecture[]` |
-| `POST /api/timetable/lectures/:id` | `204` |
-| `DELETE /api/timetable/lectures/:id` | `204` |
+| 요청                                 | 성공            |
+| ------------------------------------ | --------------- |
+| `GET /api/timetable`                 | `200 Lecture[]` |
+| `POST /api/timetable/lectures/:id`   | `204`           |
+| `DELETE /api/timetable/lectures/:id` | `204`           |
 
 ## 구현 범위
 

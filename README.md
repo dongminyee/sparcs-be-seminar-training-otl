@@ -11,12 +11,12 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-| 구성 | 로컬 주소 | 역할 |
-| --- | --- | --- |
-| Next.js | http://127.0.0.1:3000 | 강의 검색, 로그인, 시간표, 리뷰 및 Nest API 프록시 |
-| 실습용 NestJS | http://127.0.0.1:3001/api/health | 실습 API, 강의 동기화, 삭제 이벤트 |
-| 보조 NestJS | http://127.0.0.1:3002/api/lectures | 동기화할 강의 피드 및 주기적인 삭제 요청 |
-| MySQL 8.4 | 127.0.0.1:13306 | 초기 계정과 강의 및 실습 데이터 |
+| 구성          | 로컬 주소                          | 역할                                               |
+| ------------- | ---------------------------------- | -------------------------------------------------- |
+| Next.js       | http://127.0.0.1:3000              | 강의 검색, 로그인, 시간표, 리뷰 및 Nest API 프록시 |
+| 실습용 NestJS | http://127.0.0.1:3001/api/health   | 실습 API, 강의 동기화, 삭제 이벤트                 |
+| 보조 NestJS   | http://127.0.0.1:3002/api/lectures | 동기화할 강의 피드 및 주기적인 삭제 요청           |
+| MySQL 8.4     | 127.0.0.1:13306                    | 초기 계정과 강의 및 실습 데이터                    |
 
 `pnpm dev`는 MySQL이 준비되면 현재 브랜치의 마이그레이션을 적용하고 Prisma Client를 생성한 뒤 앱 3개를 시작합니다. `.env`와 초기값은 로컬 실습용으로 저장소에 포함됩니다. 로그인 계정은 **`student` / `mini-otl-2026`**이며, 초기 마이그레이션에 bcrypt 해시가 들어 있습니다. 리뷰 단계부터는 **`student2` / `mini-otl-2026`** 계정과 자료구조의 예시 리뷰도 제공됩니다. 새로고침하면 화면의 로그인 세션이 종료됩니다.
 
@@ -45,19 +45,19 @@ pnpm dev
 
 아래 경로는 실습 Nest 기준입니다. 브라우저용 경로도 같으며, 강의 자체 삭제는 보조 Nest에서 실습 Nest로 직접 호출합니다.
 
-| 메서드 | 경로 | 입력 | 성공 |
-| --- | --- | --- | --- |
-| GET | `/api/lectures` | 공개 | `200 Lecture[]` |
-| POST | `/api/auth/login` | JSON `{ "username": "student", "password": "mini-otl-2026" }` | `200 { accessToken, user }` |
-| GET | `/api/timetable` | `Authorization: Bearer <token>` | `200 Lecture[]` |
-| POST | `/api/timetable/lectures/:id` | Bearer 토큰 | `204` |
-| DELETE | `/api/timetable/lectures/:id` | Bearer 토큰 | `204` |
-| DELETE | `/api/lectures/:id` | `x-source-key`에 `.env`의 `SOURCE_API_KEY` | `204` |
-| GET | `/api/lectures/:lectureId/reviews` | 공개, 선택적으로 Bearer 토큰 | `200 Review[]` |
-| POST | `/api/lectures/:lectureId/reviews` | Bearer 토큰, JSON `{ "content": "..." }` | `201 Review` |
-| DELETE | `/api/lectures/:lectureId/reviews/:reviewId` | 작성자의 Bearer 토큰 | `204` |
-| POST | `/api/lectures/:lectureId/reviews/:reviewId/heart` | 작성자 이외 사용자의 Bearer 토큰 | `204` |
-| DELETE | `/api/lectures/:lectureId/reviews/:reviewId/heart` | 작성자 이외 사용자의 Bearer 토큰 | `204` |
+| 메서드 | 경로                                               | 입력                                                          | 성공                        |
+| ------ | -------------------------------------------------- | ------------------------------------------------------------- | --------------------------- |
+| GET    | `/api/lectures`                                    | 공개                                                          | `200 Lecture[]`             |
+| POST   | `/api/auth/login`                                  | JSON `{ "username": "student", "password": "mini-otl-2026" }` | `200 { accessToken, user }` |
+| GET    | `/api/timetable`                                   | `Authorization: Bearer <token>`                               | `200 Lecture[]`             |
+| POST   | `/api/timetable/lectures/:id`                      | Bearer 토큰                                                   | `204`                       |
+| DELETE | `/api/timetable/lectures/:id`                      | Bearer 토큰                                                   | `204`                       |
+| DELETE | `/api/lectures/:id`                                | `x-source-key`에 `.env`의 `SOURCE_API_KEY`                    | `204`                       |
+| GET    | `/api/lectures/:lectureId/reviews`                 | 공개, 선택적으로 Bearer 토큰                                  | `200 Review[]`              |
+| POST   | `/api/lectures/:lectureId/reviews`                 | Bearer 토큰, JSON `{ "content": "..." }`                      | `201 Review`                |
+| DELETE | `/api/lectures/:lectureId/reviews/:reviewId`       | 작성자의 Bearer 토큰                                          | `204`                       |
+| POST   | `/api/lectures/:lectureId/reviews/:reviewId/heart` | 작성자 이외 사용자의 Bearer 토큰                              | `204`                       |
+| DELETE | `/api/lectures/:lectureId/reviews/:reviewId/heart` | 작성자 이외 사용자의 Bearer 토큰                              | `204`                       |
 
 잘못된 로그인이나 인증은 `401`, 유효하지 않은 입력은 `400`, 담기 또는 강의 자체 삭제에서 대상이 없으면 `404`를 반환합니다. 같은 학기의 다른 강의와 시간이 겹치면 담기 API는 `409 TIMETABLE_CONFLICT`와 충돌 상대 강의 ID를 반환합니다. 응답 타입과 강의 피드 스키마는 `packages/contracts`에 있습니다. 수업시간의 `day`는 월요일 0부터 금요일 4까지이며 `begin`, `end`는 자정부터 분 단위입니다.
 

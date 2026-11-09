@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
-import { SourceService } from './source.service';
+import { Injectable, Logger } from "@nestjs/common";
+import { Cron } from "@nestjs/schedule";
+import { SourceService } from "./source.service";
 
 @Injectable()
 export class SourceScheduler {
@@ -8,7 +8,9 @@ export class SourceScheduler {
 
   constructor(private readonly source: SourceService) {}
 
-  @Cron(process.env.SOURCE_DELETE_CRON ?? '*/30 * * * * *', { waitForCompletion: true })
+  @Cron(process.env.SOURCE_DELETE_CRON ?? "*/30 * * * * *", {
+    waitForCompletion: true,
+  })
   async requestDeletion() {
     try {
       const deletedId = await this.source.requestLectureDeletion();

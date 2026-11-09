@@ -1,4 +1,4 @@
-import { Planner } from './planner';
+import { Planner } from "./planner";
 
 export default function Page() {
   return <Planner />;

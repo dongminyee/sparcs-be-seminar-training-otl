@@ -9,12 +9,11 @@ datasource db {
 }
 
 model User {
-  id           Int     @id @default(autoincrement())
-  username     String  @unique @db.VarChar(32)
-  name         String  @db.VarChar(50)
-  password     String? @db.VarChar(72)
-  // Kept until the existing review seed migration has run.
-  passwordHash String? @ignore @db.VarChar(60)
+  id       Int      @id @default(autoincrement())
+  username String   @unique @db.VarChar(32)
+  name     String   @db.VarChar(50)
+  password String?  @db.VarChar(72)
+  reviews  Review[]
 }
 
 model Lecture {
@@ -30,6 +29,7 @@ model Lecture {
   semester   Int
   deletedAt  DateTime?
   classes    ClassTime[]
+  reviews    Review[]
 }
 
 model ClassTime {
@@ -42,3 +42,20 @@ model ClassTime {
 
   @@id([lectureId, day, begin])
 }
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  lectureId Int
+  content   String   @db.VarChar(500)
+  createdAt DateTime @default(now())
+  author    User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  lecture   Lecture  @relation(fields: [lectureId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, lectureId])
+  @@index([lectureId, id])
+  @@map("review")
+}
+
+// TODO(03a): Add TimetableLecture and the reverse relations on User and Lecture.
+// TODO(08a): Add ReviewHeart, its reverse relations and Review.heartCount.

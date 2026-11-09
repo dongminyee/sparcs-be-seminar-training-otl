@@ -1,5 +1,5 @@
 import { EnvModule } from "@mini-otl/env";
-import { TransactionsModule } from "./database/transactions.module";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 import { Controller, Get, Module } from "@nestjs/common";
 import { LecturesModule } from "./lectures/lectures.module";
 import { AuthModule } from "./auth/auth.module";
@@ -17,7 +17,7 @@ class HealthController {
 @Module({
   imports: [
     EnvModule,
-    TransactionsModule,
+    EventEmitterModule.forRoot(),
     LecturesModule,
     AuthModule,
     TimetableModule,

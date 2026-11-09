@@ -2,28 +2,44 @@ import {
   Controller,
   Delete,
   Get,
-  NotImplementedException,
+  HttpCode,
+  Param,
   Post,
+  Req,
+  UseGuards,
 } from "@nestjs/common";
+import { JwtAuthGuard } from "../../auth/presentation/jwt-auth.guard";
+import type { AuthenticatedUser } from "../../auth/presentation/jwt.strategy";
+import { ResourceIdPipe } from "../../common/resource-id.pipe";
+import { TimetableService } from "../service/timetable.service";
+
+type AuthenticatedRequest = { user: AuthenticatedUser };
 
 @Controller("timetable")
+@UseGuards(JwtAuthGuard)
 export class TimetableController {
+  constructor(private readonly timetable: TimetableService) {}
+
   @Get()
-  findMine() {
-    // TODO(3): Model and migrate the User–Lecture relation with Prisma.
-    // TODO(4): Apply the JWT guard and read the current user's lectures.
-    throw new NotImplementedException("내 시간표 조회 실습을 진행해 주세요.");
+  findMine(@Req() { user }: AuthenticatedRequest) {
+    return this.timetable.findMine(user.id);
   }
 
   @Post("lectures/:id")
-  addLecture() {
-    // TODO(4): Add the lecture to the authenticated user's timetable.
-    throw new NotImplementedException("시간표 강의 추가 실습을 진행해 주세요.");
+  @HttpCode(204)
+  addLecture(
+    @Req() { user }: AuthenticatedRequest,
+    @Param("id", ResourceIdPipe) id: number,
+  ) {
+    return this.timetable.addTimetableLecture(user.id, id);
   }
 
   @Delete("lectures/:id")
-  removeLecture() {
-    // TODO(4): Remove the lecture from the authenticated user's timetable.
-    throw new NotImplementedException("시간표 강의 제거 실습을 진행해 주세요.");
+  @HttpCode(204)
+  removeLecture(
+    @Req() { user }: AuthenticatedRequest,
+    @Param("id", ResourceIdPipe) id: number,
+  ) {
+    return this.timetable.removeLecture(user.id, id);
   }
 }

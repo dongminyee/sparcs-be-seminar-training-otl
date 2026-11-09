@@ -16,6 +16,7 @@ export class SourceService {
   }
 
   async requestLectureDeletion() {
+    if (this.config.get<string>("SOURCE_DELETE_ENABLED") !== "1") return;
     if (Date.now() - this.startedAt < 90_000) return;
 
     const apiUrl = this.config.getOrThrow<string>("API_URL");

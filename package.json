@@ -6,7 +6,7 @@
     "node": ">=22.12"
   },
   "scripts": {
-    "dev": "pnpm db:up && pnpm db:deploy && pnpm db:generate && dotenv -e .env -- concurrently --names web,api,source --prefix-colors magenta,cyan,yellow \"pnpm --filter @mini-otl/web dev\" \"pnpm --filter @mini-otl/api dev\" \"pnpm --filter @mini-otl/source dev\"",
+    "dev": "pnpm db:up && pnpm db:deploy && pnpm db:generate && dotenv -e .env -- concurrently --names web,api --prefix-colors magenta,cyan \"pnpm --filter @mini-otl/web dev\" \"pnpm --filter @mini-otl/api dev\"",
     "check": "pnpm -r check",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -14,7 +14,8 @@
     "db:down": "docker compose down",
     "db:deploy": "dotenv -e .env -- pnpm --filter @mini-otl/api exec prisma migrate deploy",
     "db:generate": "pnpm --filter @mini-otl/api exec prisma generate",
-    "db:migrate": "dotenv -e .env -- pnpm --filter @mini-otl/api exec prisma migrate dev"
+    "db:migrate": "dotenv -e .env -- pnpm --filter @mini-otl/api exec prisma migrate dev",
+    "dev:source": "dotenv -e .env -- pnpm --filter @mini-otl/source dev"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",

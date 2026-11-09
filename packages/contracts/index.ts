@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export const resourceIdSchema = z.number().int().positive().max(2_147_483_647);
+
 export const classTimeSchema = z
   .object({
     day: z.number().int().min(0).max(4),
@@ -12,7 +14,7 @@ export const classTimeSchema = z
   });
 
 export const lectureSchema = z.object({
-  id: z.number().int().positive().max(2_147_483_647),
+  id: resourceIdSchema,
   code: z.string().min(1).max(16),
   classNo: z.string().min(1).max(4),
   title: z.string().min(1).max(100),

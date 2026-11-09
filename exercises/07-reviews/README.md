@@ -1,25 +1,41 @@
 # 07 · 강의 리뷰와 작성자 권한
 
-사용자는 강의별로 리뷰를 한 건 작성할 수 있습니다. 강의 제목을 누르면 준비된 Next 화면이 해당 강의의 리뷰를 요청합니다. [리뷰 컨트롤러](../../apps/api/src/reviews/presentation/reviews.controller.ts)의 조회·작성·삭제 스텁에서 시작하세요.
+`Review` 테이블, `student2`의 예시 리뷰, HTTP 입력 검사와 [ReviewRepository](../../apps/api/src/reviews/repository/review.repository.ts)가 제공됩니다. [ReviewsService](../../apps/api/src/reviews/service/reviews.service.ts)의 세 메서드를 순서대로 채우세요. 작성·삭제에 쓰는 사용자 ID는 로그인 토큰에서 가져옵니다.
 
-| 요청                                                | 성공           |
-| --------------------------------------------------- | -------------- |
-| `GET /api/lectures/:lectureId/reviews`              | `200 Review[]` |
-| `POST /api/lectures/:lectureId/reviews`             | `201 Review`   |
-| `DELETE /api/lectures/:lectureId/reviews/:reviewId` | `204`          |
+## 07a · 리뷰 조회
 
-## 구현 범위
+`findAll(lectureId, viewerId)`에서 먼저 강의가 열려 있는지 `LectureRepository.existsActive()`로 확인합니다. 없거나 삭제된 강의는 `404`입니다. 있으면 `reviews.findForLecture(lectureId, viewerId)`의 결과를 반환합니다.
 
-- `Review` 모델을 작성하고 사용자·강의 조합에 유일 제약을 둡니다. 작성자, 강의, 본문, 작성 시각을 저장하는 Prisma 마이그레이션을 추가합니다.
-- 조회는 공개로 제공하고 작성·삭제는 JWT로 보호합니다. 작성자는 요청 본문에서 받지 않고 토큰의 사용자 ID를 사용합니다.
-- 작성 본문 `{ "content": "..." }`은 앞뒤 공백을 뺀 뒤 1–500자여야 합니다.
-- 삭제 전에 경로의 리뷰가 해당 강의에 속하는지, JWT 사용자와 작성자가 같은지 확인합니다. 다른 사람의 리뷰에는 `403`을 반환합니다.
-- 권한 확인용으로 `student2` 계정과 이 계정이 작성한 자료구조(`1001`) 예시 리뷰를 준비합니다. 실습 계정 두 개의 비밀번호는 `mini-otl-2026`입니다.
+```sh
+REVIEWS=http://127.0.0.1:3001/api/lectures/1001/reviews
+curl -i "$REVIEWS"
+```
 
-## 완료 확인
+로그인 없이 `200`과 예시 리뷰를 확인합니다. 응답에는 리뷰 ID, 강의 ID, 작성자, 본문, 작성 시각이 들어 있습니다.
 
-- 로그인 없이 자료구조를 펼치면 예시 리뷰가 나타납니다. 로그인 없이 작성·삭제 API를 호출하면 `401`입니다.
-- `student`로 리뷰를 등록한 뒤 같은 강의에 다시 등록하면 `409`입니다.
-- `student`의 토큰으로 `student2`의 예시 리뷰를 삭제하면 `403`이며 리뷰는 그대로 남습니다. 직접 쓴 리뷰는 `204`로 삭제됩니다.
+## 07b · 리뷰 작성
+
+`create(lectureId, userId, content)`에서 강의가 열려 있는지 확인한 뒤 `reviews.create()`를 호출합니다. DB의 유일 제약은 같은 사람이 같은 강의에 리뷰를 두 번 쓰지 못하게 합니다. Repository가 이 경우 `null`을 반환하므로 Service에서 `ConflictException`으로 바꿉니다.
+
+```sh
+curl -i "$REVIEWS" -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' -d '{"content":"자료구조 실습이 유익했어요."}'
+```
+
+첫 요청은 `201`, 같은 요청을 다시 보내면 `409`입니다. 인증 헤더를 빼면 `401`입니다. 본문을 잘라 1–500자인지 확인하는 코드는 Controller에 들어 있습니다.
+
+## 07c · 작성자만 삭제하기
+
+`remove(lectureId, reviewId, userId)`에서 강의가 열려 있는지 확인하세요. `reviews.findAuthor(lectureId, reviewId)`가 결과를 반환하지 않으면 `404`입니다. 작성자 ID와 요청 사용자 ID가 다르면 `ForbiddenException`을 던집니다. 일치할 때 `reviews.remove(reviewId)`를 호출하고, 그 사이 리뷰가 사라져 삭제 건수가 0이면 `404`를 반환하세요.
+
+아래는 자료구조 리뷰에서 `student2`의 예시 리뷰 ID를 찾고, `student`의 토큰으로 삭제를 요청하는 명령입니다.
+
+```sh
+REVIEW_ID=$(curl -fsS "$REVIEWS" \
+  | node -pe 'JSON.parse(require("node:fs").readFileSync(0, "utf8")).find(review => review.author.id === 2).id')
+curl -i -X DELETE "$REVIEWS/$REVIEW_ID" -H "Authorization: Bearer $TOKEN"
+```
+
+`403`이 돌아오고, 다시 조회해도 예시 리뷰가 남아 있어야 합니다. 07b에서 응답받은 내 리뷰 ID로 요청하면 `204`이고 해당 리뷰가 목록에서 빠집니다. Next에서 강의 제목을 눌러도 리뷰 목록과 작성 화면을 확인할 수 있습니다.
 
 [전체 실습 순서](../../README.md#실습-순서)

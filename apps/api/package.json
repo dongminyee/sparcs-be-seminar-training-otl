@@ -9,8 +9,6 @@
   "dependencies": {
     "@mini-otl/contracts": "workspace:*",
     "@mini-otl/env": "workspace:*",
-    "@nestjs-cls/transactional": "4.0.2",
-    "@nestjs-cls/transactional-adapter-prisma": "2.0.2",
     "@nestjs/common": "11.2.8",
     "@nestjs/core": "11.2.8",
     "@nestjs/event-emitter": "^3.1.0",
@@ -19,7 +17,6 @@
     "@nestjs/platform-express": "11.2.8",
     "@nestjs/schedule": "^6.1.0",
     "@prisma/client": "6.19.3",
-    "nestjs-cls": "7.0.2",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",

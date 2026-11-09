@@ -1,16 +1,29 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { Cron } from "@nestjs/schedule";
+import { ConfigService } from "@mini-otl/env";
+import { Injectable, Logger, OnApplicationBootstrap } from "@nestjs/common";
+import { SchedulerRegistry } from "@nestjs/schedule";
+import { CronJob } from "cron";
 import { SourceService } from "./source.service";
 
 @Injectable()
-export class SourceScheduler {
+export class SourceScheduler implements OnApplicationBootstrap {
   private readonly logger = new Logger(SourceScheduler.name);
 
-  constructor(private readonly source: SourceService) {}
+  constructor(
+    private readonly source: SourceService,
+    private readonly config: ConfigService,
+    private readonly registry: SchedulerRegistry,
+  ) {}
 
-  @Cron(process.env.SOURCE_DELETE_CRON ?? "*/30 * * * * *", {
-    waitForCompletion: true,
-  })
+  onApplicationBootstrap() {
+    const job = CronJob.from({
+      cronTime: this.config.getOrThrow<string>("SOURCE_DELETE_CRON"),
+      onTick: () => this.requestDeletion(),
+      waitForCompletion: true,
+    });
+    this.registry.addCronJob("source-delete", job);
+    job.start();
+  }
+
   async requestDeletion() {
     try {
       const deletedId = await this.source.requestLectureDeletion();

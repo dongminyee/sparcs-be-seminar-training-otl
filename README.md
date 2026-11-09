@@ -18,11 +18,13 @@ pnpm dev
 | 보조 NestJS   | http://127.0.0.1:3002/api/lectures | 동기화할 강의 피드 및 주기적인 삭제 요청           |
 | MySQL 8.4     | 127.0.0.1:13306                    | 초기 계정과 강의 및 실습 데이터                    |
 
-`pnpm dev`는 MySQL이 준비되면 현재 브랜치의 마이그레이션을 적용하고 Prisma Client를 생성한 뒤 앱 3개를 시작합니다. `.env`와 초기값은 로컬 실습용으로 저장소에 포함됩니다. 로그인 계정은 **`student` / `mini-otl-2026`**이며, 초기 마이그레이션에 bcrypt 해시가 들어 있습니다. 리뷰 단계부터는 **`student2` / `mini-otl-2026`** 계정과 자료구조의 예시 리뷰도 제공됩니다. 새로고침하면 화면의 로그인 세션이 종료됩니다.
+`pnpm dev`는 MySQL이 준비되면 현재 브랜치의 마이그레이션을 적용하고 Prisma Client를 생성한 뒤 앱 3개를 시작합니다. `.env`와 초기값은 로컬 실습용으로 저장소에 포함됩니다. 로그인 계정은 **`student` / `mini-otl-2026`**이며, 초기 마이그레이션에 bcrypt 해시가 들어 있습니다. 리뷰 단계부터는 **`student2` / `mini-otl-2026`** 계정과 자료구조의 예시 리뷰도 제공됩니다. 새로고침하면 화면의 로그인 세션이 종료됩니다. 두 Nest 앱은 공통 `EnvModule`의 `ConfigService`로 설정을 읽습니다.
 
 `main`의 미구현 API는 `501`을 반환합니다. Next 화면은 각각의 요청 상태를 독립적으로 표시합니다. 브라우저는 Next의 같은 출처 API를 호출하고, Next는 실습용 Nest에만 연결합니다. Nest에 연결할 수 없으면 해당 요청은 `503`, Nest 내부 오류는 `502`로 표시됩니다.
 
 `Ctrl+C`로 앱을 종료하고 `pnpm db:down`으로 MySQL을 중지합니다. 정답에서 실습을 다시 시작하거나 Cron 시연을 처음부터 반복할 때는 앱을 종료한 뒤 `docker compose down -v`로 **이 프로젝트의 실습 DB 데이터를 삭제**하고 `pnpm dev`를 실행하세요.
+
+코드 포맷은 루트의 `.prettierrc`를 사용합니다. `pnpm format`으로 적용하고 `pnpm format:check`로 확인합니다.
 
 ## 실습 순서
 

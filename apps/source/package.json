@@ -8,10 +8,12 @@
   },
   "dependencies": {
     "@mini-otl/contracts": "workspace:*",
+    "@mini-otl/env": "workspace:*",
     "@nestjs/common": "11.2.8",
     "@nestjs/core": "11.2.8",
     "@nestjs/platform-express": "11.2.8",
     "@nestjs/schedule": "^6.1.0",
+    "cron": "4.4.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.0"
   },

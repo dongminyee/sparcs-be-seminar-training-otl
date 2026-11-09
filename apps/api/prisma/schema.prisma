@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model User {
+  id           Int    @id @default(autoincrement())
+  username     String @unique @db.VarChar(32)
+  name         String @db.VarChar(50)
+  passwordHash String @db.VarChar(60)
+}
+
+model Lecture {
+  id         Int         @id
+  code       String      @db.VarChar(16)
+  classNo    String      @db.VarChar(4)
+  title      String      @db.VarChar(100)
+  titleEn    String      @db.VarChar(150)
+  department String      @db.VarChar(50)
+  professor  String      @db.VarChar(50)
+  credit     Int
+  year       Int
+  semester   Int
+  deletedAt  DateTime?
+  classes    ClassTime[]
+}
+
+model ClassTime {
+  lectureId Int
+  day       Int
+  begin     Int
+  end       Int
+  room      String  @db.VarChar(64)
+  lecture   Lecture @relation(fields: [lectureId], references: [id], onDelete: Cascade)
+
+  @@id([lectureId, day, begin])
+}

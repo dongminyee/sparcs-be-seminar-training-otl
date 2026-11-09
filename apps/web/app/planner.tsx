@@ -1,18 +1,11 @@
 'use client';
 
 import { useRef, useState, type FormEvent } from 'react';
-import { demo, type Lecture, type Session } from '@mini-otl/contracts';
+import { demo, reviewDemoUsername, type Lecture, type Session } from '@mini-otl/contracts';
 import { request, useApi } from './api-client';
+import { ApiError } from './api-error';
+import { LectureReviews } from './lecture-reviews';
 import { days, timeLabel, WeekGrid } from './week-grid';
-
-function ApiError({ message, retry }: { message: string; retry?: () => void }) {
-  return (
-    <div className="notice" role="status">
-      <span>{message}</span>
-      {retry && <button type="button" className="text-button" onClick={retry}>다시 시도</button>}
-    </div>
-  );
-}
 
 export function Planner() {
   const [session, setSession] = useState<Session>();
@@ -76,7 +69,7 @@ export function Planner() {
             <h2 id="login-heading">실습 계정 로그인</h2>
             <button type="button" className="text-button" aria-label="닫기" onClick={() => dialog.current?.close()}>닫기</button>
           </div>
-          <p>초기 데이터에 포함된 실습 계정입니다.</p>
+          <p>리뷰 단계부터 <strong>{reviewDemoUsername}</strong> 계정도 사용할 수 있습니다. 비밀번호는 같습니다.</p>
           <label>아이디<input name="username" autoComplete="username" defaultValue={demo.username} required /></label>
           <label>비밀번호<input name="password" type="password" autoComplete="current-password" defaultValue={demo.password} required /></label>
           {loginError && <ApiError message={loginError} />}
@@ -90,6 +83,7 @@ export function Planner() {
 function Workspace({ session, openLogin }: { session?: Session; openLogin: () => void }) {
   const catalog = useApi<Lecture[]>('lectures');
   const [query, setQuery] = useState('');
+  const [expandedLectureId, setExpandedLectureId] = useState<number>();
   const [timetableRevision, setTimetableRevision] = useState(0);
   const [busy, setBusy] = useState(false);
   const [addError, setAddError] = useState('');
@@ -133,17 +127,36 @@ function Workspace({ session, openLogin }: { session?: Session; openLogin: () =>
           {!lectures && !catalog.error && <p className="empty">개설강의를 불러오는 중…</p>}
           {lectures?.length === 0 && <p className="empty">검색 결과가 없습니다.</p>}
           <ul className="lecture-list">
-            {lectures?.map((lecture) => (
-              <li key={lecture.id}>
-                <div>
-                  <span className="course-code">{lecture.code} · {lecture.classNo}분반</span>
-                  <h3>{lecture.title}</h3>
-                  <p>{lecture.department} · {lecture.professor} · {lecture.credit}학점</p>
-                  <p className="lecture-time">{lecture.classes.map(({ day, begin }) => `${days[day]} ${timeLabel(begin)}`).join(' · ') || '수업 시간 미정'}</p>
-                </div>
-                <button className="button add" disabled={busy} aria-label={`${lecture.title} 담기`} onClick={() => void addLecture(lecture.id)}>+ 담기</button>
-              </li>
-            ))}
+            {lectures?.map((lecture) => {
+              const expanded = expandedLectureId === lecture.id;
+              const reviewsId = `lecture-${lecture.id}-reviews`;
+              return (
+                <li key={lecture.id}>
+                  <div className="lecture-summary">
+                    <div>
+                      <span className="course-code">{lecture.code} · {lecture.classNo}분반</span>
+                      <h3>
+                        <button
+                          type="button"
+                          className="lecture-toggle"
+                          aria-expanded={expanded}
+                          aria-controls={reviewsId}
+                          onClick={() => setExpandedLectureId(expanded ? undefined : lecture.id)}
+                        >
+                          {lecture.title} <span aria-hidden="true">리뷰 {expanded ? '▴' : '▾'}</span>
+                        </button>
+                      </h3>
+                      <p>{lecture.department} · {lecture.professor} · {lecture.credit}학점</p>
+                      <p className="lecture-time">{lecture.classes.map(({ day, begin }) => `${days[day]} ${timeLabel(begin)}`).join(' · ') || '수업 시간 미정'}</p>
+                    </div>
+                    <button className="button add" disabled={busy} aria-label={`${lecture.title} 담기`} onClick={() => void addLecture(lecture.id)}>+ 담기</button>
+                  </div>
+                  <div id={reviewsId} hidden={!expanded}>
+                    {expanded && <LectureReviews key={session?.accessToken} lectureId={lecture.id} session={session} openLogin={openLogin} />}
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </section>

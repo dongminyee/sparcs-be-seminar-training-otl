@@ -56,10 +56,31 @@ h2 { font-size: 18px; letter-spacing: -.035em; }
 .search input { width: 100%; min-width: 0; border: 0; padding: 10px 0; background: transparent; color: inherit; font-size: 14px; }
 .search input:focus-visible { outline-offset: 0; }
 .lecture-list, .saved-list { list-style: none; padding: 0; margin: 0; }
-.lecture-list li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 15px 2px; border-bottom: 1px solid var(--line); }
-.lecture-list li:last-child { border-bottom: 0; }
+.lecture-list > li { padding: 15px 2px; border-bottom: 1px solid var(--line); }
+.lecture-summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.lecture-list > li:last-child { border-bottom: 0; }
 .course-code { color: var(--accent); font-size: 11px; font-weight: 750; letter-spacing: .025em; }
 .lecture-list h3 { font-size: 16px; margin: 3px 0 4px; }
+.lecture-toggle { padding: 0; border: 0; background: transparent; color: inherit; font-weight: inherit; text-align: left; }
+.lecture-toggle:hover { color: var(--accent); }
+.lecture-toggle span { margin-left: 4px; color: var(--accent); font-size: 11px; white-space: nowrap; }
+.lecture-reviews { margin-top: 13px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: #fcf9fa; }
+.lecture-reviews h4 { margin: 0; font-size: 14px; }
+.lecture-reviews h4 span { margin-left: 4px; color: var(--muted); font-size: 12px; font-weight: 500; }
+.review-list { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 8px; }
+.review-card { padding: 9px 10px; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; }
+.review-meta, .review-actions { display: flex; gap: 8px; align-items: center; }
+.review-meta { font-size: 13px; }
+.review-meta .count { padding: 3px 6px; font-size: 11px; }
+.review-card p { margin-top: 5px; white-space: pre-wrap; overflow-wrap: anywhere; color: inherit; }
+.review-actions { margin-top: 6px; }
+.button.heart-button { padding: 3px 8px; color: var(--accent); }
+.heart-button[aria-pressed="true"] { background: var(--blush); border-color: var(--accent); }
+.heart-total { color: var(--accent); font-size: 13px; }
+.review-form { display: grid; gap: 6px; justify-items: end; margin-top: 10px; }
+.review-form label { display: grid; gap: 5px; width: 100%; font-size: 13px; font-weight: 650; }
+.review-form textarea { width: 100%; min-height: 64px; resize: vertical; padding: 8px; border: 1px solid var(--line); border-radius: 8px; color: inherit; font: inherit; font-weight: 400; }
+.review-login { margin-top: 8px; }
 .lecture-list p { color: var(--muted); font-size: 13px; line-height: 1.45; }
 .lecture-list .lecture-time { margin-top: 4px; font-variant-numeric: tabular-nums; font-size: 12px; }
 .button.add { color: var(--accent); border-color: #f1dce3; background: #fcf3f6; }

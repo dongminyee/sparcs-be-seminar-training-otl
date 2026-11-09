@@ -3,8 +3,12 @@ type RouteContext = { params: Promise<{ segments: string[] }> };
 async function proxy(request: Request, { params }: RouteContext) {
   const path = (await params).segments.join('/');
   const route = `${request.method} ${path}`;
+  const reviewCollection = /^lectures\/[0-9]+\/reviews$/.test(path);
   const allowed = ['GET lectures', 'POST auth/login', 'GET timetable'].includes(route)
-    || /^(POST|DELETE) timetable\/lectures\/[0-9]+$/.test(route);
+    || /^(POST|DELETE) timetable\/lectures\/[0-9]+$/.test(route)
+    || (reviewCollection && ['GET', 'POST'].includes(request.method))
+    || /^DELETE lectures\/[0-9]+\/reviews\/[0-9]+$/.test(route)
+    || /^(POST|DELETE) lectures\/[0-9]+\/reviews\/[0-9]+\/heart$/.test(route);
   if (!allowed) return Response.json({ message: '지원하지 않는 API입니다.' }, { status: 404 });
 
   const headers = new Headers();
@@ -12,7 +16,7 @@ async function proxy(request: Request, { params }: RouteContext) {
   if (authorization) headers.set('authorization', authorization);
 
   let body: string | undefined;
-  if (route === 'POST auth/login') {
+  if (route === 'POST auth/login' || (reviewCollection && request.method === 'POST')) {
     body = await request.text();
     headers.set('content-type', request.headers.get('content-type') ?? 'application/json');
   }

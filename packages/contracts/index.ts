@@ -39,3 +39,17 @@ export type Session = {
 };
 
 export const demo = { username: 'student', password: 'mini-otl-2026', userId: 1 } as const;
+
+export const reviewContentLimit = 500;
+export const reviewContentSchema = z.string().trim().min(1).max(reviewContentLimit);
+export const reviewDemoUsername = 'student2';
+
+export type Review = {
+  id: number;
+  lectureId: number;
+  author: { id: number; name: string };
+  content: string;
+  createdAt: string;
+  heartCount?: number;
+  heartedByMe?: boolean;
+};

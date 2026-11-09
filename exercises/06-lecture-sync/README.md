@@ -5,7 +5,7 @@
 ## 구현 범위
 
 - 스케줄러, 동기화 Service와 Repository를 `LecturesModule`에 등록합니다.
-- Scheduler는 `.env`의 `SYNC_CRON`에 따라 실행됩니다. 기본값은 10초마다 한 번이며, 이전 실행이 진행 중이면 겹쳐 실행하지 않습니다.
+- Scheduler는 `@Cron("*/10 * * * * *")`로 10초마다 동기화 Service를 호출합니다.
 - `GET http://127.0.0.1:3002/api/lectures`의 응답을 검증하고, 보조 서버가 부여한 강의 ID를 기준으로 강의와 수업시간을 동기화합니다.
 - 처음 가져온 강의는 04단계의 `TimetableService.addTimetableLecture`를 통해 실습 계정에 담습니다.
 - 시간표 충돌은 로그에 기록하고 다음 강의를 처리합니다. 충돌한 강의도 개설강의에는 남아야 합니다.

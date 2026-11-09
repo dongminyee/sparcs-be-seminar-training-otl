@@ -16,10 +16,7 @@ export class SourceService {
   }
 
   async requestLectureDeletion() {
-    const graceMs = Number(
-      this.config.getOrThrow<string>("SOURCE_DELETE_AFTER_MS"),
-    );
-    if (Date.now() - this.startedAt < graceMs) return;
+    if (Date.now() - this.startedAt < 90_000) return;
 
     const apiUrl = this.config.getOrThrow<string>("API_URL");
     const response = await fetch(`${apiUrl}/api/lectures/${retireLectureId}`, {

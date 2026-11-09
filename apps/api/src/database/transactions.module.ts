@@ -13,6 +13,7 @@ import { PrismaService } from "./prisma.service";
       plugins: [
         new ClsPluginTransactional({
           imports: [DatabaseModule],
+          enableTransactionProxy: true,
           adapter: new TransactionalAdapterPrisma({
             prismaInjectionToken: PrismaService,
           }),

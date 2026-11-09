@@ -35,7 +35,7 @@ pnpm dev
 3. **[시간표 테이블](exercises/03-timetable-model/README.md)** — `User`와 `Lecture`를 연결하는 명시적인 다대다 모델을 작성합니다. 사용자와 강의 조합을 복합 기본 키로 두고 `pnpm db:migrate --name add_timetable`로 마이그레이션을 만듭니다. 이 명령은 MySQL 컨테이너가 실행 중일 때 사용합니다.
 4. **[시간표 API](exercises/04-timetable-api/README.md)** — Guard로 검증한 토큰에서 사용자 ID를 얻어 조회, 담기, 빼기를 구현합니다. 담기는 `TimetableService.addTimetableLecture`에서 검증합니다. 같은 강의를 여러 번 담아도 한 건만 남고, 같은 학기의 기존 강의와 수업시간이 겹치면 `409`를 반환합니다. 수업 종료와 시작이 맞닿는 경우에는 담을 수 있습니다.
 5. **[강의 삭제 이벤트](exercises/05-lecture-delete-event/README.md)** — 강의를 삭제 상태로 바꾸고 `LectureDeleteEvent`를 발행합니다. 시간표 행 삭제는 EventHandler가 호출하는 시간표 로직에서 수행합니다. 보조 Nest는 기동 후 최소 90초가 지나면 30초마다 `2001`의 삭제를 요청합니다. 강의 `2002`는 계속 남습니다.
-6. **[Cron 동기화](exercises/06-lecture-sync/README.md)** — 기본 10초마다 보조 Nest의 피드를 읽어 개설강의를 반영하고 처음 들어온 강의를 같은 서비스로 실습 계정 시간표에 담습니다. 충돌한 강의는 개설강의에 남고, 시간표에는 추가되지 않습니다. Cron은 충돌을 로그로 남기고 다음 강의를 처리합니다. 반복 동기화는 사용자가 뺀 강의를 다시 담지 않습니다.
+6. **[Cron 동기화](exercises/06-lecture-sync/README.md)** — `@Cron("*/10 * * * * *")`으로 보조 Nest의 피드를 10초마다 읽어 개설강의를 반영하고 처음 들어온 강의를 같은 서비스로 실습 계정 시간표에 담습니다. 충돌한 강의는 개설강의에 남고, 시간표에는 추가되지 않습니다. Cron은 충돌을 로그로 남기고 다음 강의를 처리합니다. 반복 동기화는 사용자가 뺀 강의를 다시 담지 않습니다.
 7. **[강의 리뷰](exercises/07-reviews/README.md)** — `Review` 테이블을 만들고 사용자·강의 조합을 유일하게 설정합니다. 공개 리뷰 조회, JWT가 필요한 작성·삭제를 구현합니다. 강의 제목을 누르면 그 아래 리뷰가 펼쳐집니다. 다른 사용자의 리뷰를 삭제하면 `403`을 반환합니다.
 8. **[리뷰 하트](exercises/08-review-hearts/README.md)** — `review_heart` 테이블에 사용자·리뷰 복합 키를 두고, `review.heart_count`를 추가합니다. 타인 리뷰의 하트 등록·취소와 카운트 증감을 같은 Prisma 트랜잭션에서 처리합니다. 같은 요청을 반복해도 한 번만 반영됩니다.
 

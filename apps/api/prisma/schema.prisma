@@ -9,10 +9,12 @@ datasource db {
 }
 
 model User {
-  id           Int    @id @default(autoincrement())
-  username     String @unique @db.VarChar(32)
-  name         String @db.VarChar(50)
-  passwordHash String @db.VarChar(60)
+  id           Int     @id @default(autoincrement())
+  username     String  @unique @db.VarChar(32)
+  name         String  @db.VarChar(50)
+  password     String? @db.VarChar(72)
+  // Kept until the existing review seed migration has run.
+  passwordHash String? @ignore @db.VarChar(60)
 }
 
 model Lecture {

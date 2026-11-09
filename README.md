@@ -18,7 +18,7 @@ pnpm dev
 | 보조 NestJS   | http://127.0.0.1:3002/api/lectures | 동기화할 강의 피드 및 주기적인 삭제 요청           |
 | MySQL 8.4     | 127.0.0.1:13306                    | 초기 계정과 강의 및 실습 데이터                    |
 
-`pnpm dev`는 MySQL이 준비되면 현재 브랜치의 마이그레이션을 적용하고 Prisma Client를 생성한 뒤 앱 3개를 시작합니다. `.env`와 초기값은 로컬 실습용으로 저장소에 포함됩니다. 로그인 계정은 **`student` / `mini-otl-2026`**이며, 초기 마이그레이션에 bcrypt 해시가 들어 있습니다. 리뷰 단계부터는 **`student2` / `mini-otl-2026`** 계정과 자료구조의 예시 리뷰도 제공됩니다. 새로고침하면 화면의 로그인 세션이 종료됩니다. 두 Nest 앱은 공통 `EnvModule`의 `ConfigService`로 설정을 읽습니다.
+`pnpm dev`는 MySQL이 준비되면 현재 브랜치의 마이그레이션을 적용하고 Prisma Client를 생성한 뒤 앱 3개를 시작합니다. `.env`와 초기값은 로컬 실습용으로 저장소에 포함됩니다. 로그인 계정은 **`student` / `mini-otl-2026`**입니다. 로컬 실습 계정의 비밀번호는 DB의 `password`에 평문으로 저장합니다. 리뷰 단계부터는 **`student2` / `mini-otl-2026`** 계정과 자료구조의 예시 리뷰도 제공됩니다. 새로고침하면 화면의 로그인 세션이 종료됩니다. 두 Nest 앱은 공통 `EnvModule`의 `ConfigService`로 설정을 읽습니다.
 
 `main`의 미구현 API는 `501`을 반환합니다. Next 화면은 각각의 요청 상태를 독립적으로 표시합니다. 브라우저는 Next의 같은 출처 API를 호출하고, Next는 실습용 Nest에만 연결합니다. Nest에 연결할 수 없으면 해당 요청은 `503`, Nest 내부 오류는 `502`로 표시됩니다.
 
@@ -31,7 +31,7 @@ pnpm dev
 `apps/api/src`에서 기능별 모듈을 사용합니다. Presentation(Controller / Scheduler / EventHandler)은 요청과 트리거를 받고, Service는 유스케이스를 처리하고, Repository는 Prisma로 DB에 접근합니다. `apps/source`와 `apps/web`는 준비된 상태입니다.
 
 1. **[개설강의 조회](exercises/01-lectures/README.md)** — `Lecture`와 `ClassTime`을 읽어서 강의 및 수업시간을 반환합니다. 비로그인 사용자가 조회할 수 있어야 합니다.
-2. **[로그인](exercises/02-login/README.md)** — 초기 계정을 DB에서 찾아 비밀번호를 비교하고 JWT를 발급합니다. Passport JWT Strategy와 Guard를 준비합니다.
+2. **[로그인](exercises/02-login/README.md)** — 초기 계정을 DB에서 찾아 `password` 값과 직접 비교하고 JWT를 발급합니다. Passport JWT Strategy와 Guard를 준비합니다.
 3. **[시간표 테이블](exercises/03-timetable-model/README.md)** — `User`와 `Lecture`를 연결하는 명시적인 다대다 모델을 작성합니다. 사용자와 강의 조합을 복합 기본 키로 두고 `pnpm db:migrate --name add_timetable`로 마이그레이션을 만듭니다. 이 명령은 MySQL 컨테이너가 실행 중일 때 사용합니다.
 4. **[시간표 API](exercises/04-timetable-api/README.md)** — Guard로 검증한 토큰에서 사용자 ID를 얻어 조회, 담기, 빼기를 구현합니다. 담기는 `TimetableService.addTimetableLecture`에서 검증합니다. 같은 강의를 여러 번 담아도 한 건만 남고, 같은 학기의 기존 강의와 수업시간이 겹치면 `409`를 반환합니다. 수업 종료와 시작이 맞닿는 경우에는 담을 수 있습니다.
 5. **[강의 삭제 이벤트](exercises/05-lecture-delete-event/README.md)** — 강의를 삭제 상태로 바꾸고 `LectureDeleteEvent`를 발행합니다. 시간표 행 삭제는 EventHandler가 호출하는 시간표 로직에서 수행합니다. 보조 Nest는 기동 후 최소 90초가 지나면 30초마다 `2001`의 삭제를 요청합니다. 강의 `2002`는 계속 남습니다.

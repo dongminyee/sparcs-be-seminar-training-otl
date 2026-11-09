@@ -45,7 +45,7 @@ pnpm dev
 
 ## API 계약
 
-아래 경로는 실습 Nest 기준입니다. 브라우저용 경로도 같으며, 강의 자체 삭제는 보조 Nest에서 실습 Nest로 직접 호출합니다.
+아래 경로는 실습 Nest 기준입니다. 브라우저용 경로도 같으며, 강의 자체 삭제는 보조 Nest에서 로컬 실습 Nest로 직접 호출합니다.
 
 | 메서드 | 경로                                               | 입력                                                          | 성공                        |
 | ------ | -------------------------------------------------- | ------------------------------------------------------------- | --------------------------- |
@@ -54,7 +54,7 @@ pnpm dev
 | GET    | `/api/timetable`                                   | `Authorization: Bearer <token>`                               | `200 Lecture[]`             |
 | POST   | `/api/timetable/lectures/:id`                      | Bearer 토큰                                                   | `204`                       |
 | DELETE | `/api/timetable/lectures/:id`                      | Bearer 토큰                                                   | `204`                       |
-| DELETE | `/api/lectures/:id`                                | `x-source-key`에 `.env`의 `SOURCE_API_KEY`                    | `204`                       |
+| DELETE | `/api/lectures/:id`                                | 없음                                                          | `204`                       |
 | GET    | `/api/lectures/:lectureId/reviews`                 | 공개, 선택적으로 Bearer 토큰                                  | `200 Review[]`              |
 | POST   | `/api/lectures/:lectureId/reviews`                 | Bearer 토큰, JSON `{ "content": "..." }`                      | `201 Review`                |
 | DELETE | `/api/lectures/:lectureId/reviews/:reviewId`       | 작성자의 Bearer 토큰                                          | `204`                       |

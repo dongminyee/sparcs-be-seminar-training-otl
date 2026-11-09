@@ -24,9 +24,6 @@ export class SourceService {
     const apiUrl = this.config.getOrThrow<string>("API_URL");
     const response = await fetch(`${apiUrl}/api/lectures/${retireLectureId}`, {
       method: "DELETE",
-      headers: {
-        "x-source-key": this.config.getOrThrow<string>("SOURCE_API_KEY"),
-      },
       signal: AbortSignal.timeout(3000),
     });
 
